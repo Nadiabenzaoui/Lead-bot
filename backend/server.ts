@@ -11,6 +11,7 @@ import sendRouter from './routes/send';
 import monitorRouter from './routes/monitor';
 import botRouter from './routes/bot';
 import exportRouter from './routes/export';
+import authRouter from './routes/auth';
 
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +30,7 @@ app.use('/send', sendRouter);
 app.use('/monitor', monitorRouter);
 app.use('/bot', botRouter);
 app.use('/export', exportRouter);
+app.use('/auth', authRouter);
 
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 

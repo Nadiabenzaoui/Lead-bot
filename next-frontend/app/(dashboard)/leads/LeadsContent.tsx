@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
-import { useLeads } from '../../hooks/useLeads';
-import { TierBadge, StatusBadge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { EmptyState } from '../../components/ui/EmptyState';
-import { CATEGORIES, TIER_LABELS, TIER_DOT_COLORS, STATUTS } from '../../constants';
+import { useLeads } from '../../../hooks/useLeads';
+import { TierBadge, StatusBadge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { CATEGORIES, TIER_LABELS, TIER_DOT_COLORS, STATUTS } from '../../../constants';
 
 const LIMIT = 20;
 
@@ -67,12 +67,12 @@ function ActionMenu({ leadId, onDelete }: ActionMenuProps): React.ReactElement {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="opacity-0 group-hover:opacity-100 flex items-center justify-center w-6 h-6 rounded text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 transition-all"
+        className="opacity-0 group-hover:opacity-100 flex items-center justify-center w-6 h-6 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all"
       >
         <DotsIcon />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-36 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-20 py-1 overflow-hidden">
+        <div className="absolute right-0 top-full mt-1 w-36 bg-slate-50 border border-slate-200 rounded-lg shadow-xl z-20 py-1 overflow-hidden">
           <button
             onClick={() => { onDelete(leadId); setOpen(false); }}
             className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors text-left"
@@ -87,14 +87,14 @@ function ActionMenu({ leadId, onDelete }: ActionMenuProps): React.ReactElement {
 
 function getScoreColor(score: number, categorie?: string): string {
   const MAP: Record<string, string> = {
-    CHAUD: 'text-emerald-400',
-    TIEDE: 'text-blue-400',
-    FROID: 'text-zinc-500',
+    CHAUD: 'text-violet-600',
+    TIEDE: 'text-fuchsia-500',
+    FROID: 'text-slate-500',
   };
   if (categorie && MAP[categorie]) return MAP[categorie];
-  if (score >= 7) return 'text-emerald-400';
-  if (score >= 4) return 'text-blue-400';
-  return 'text-zinc-500';
+  if (score >= 7) return 'text-violet-600';
+  if (score >= 4) return 'text-fuchsia-500';
+  return 'text-slate-500';
 }
 
 const STATUT_LABELS: Record<string, string> = {
@@ -120,15 +120,15 @@ export default function LeadsContent(): React.ReactElement {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-6 py-4 border-b border-zinc-800/80 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-sm font-semibold text-zinc-100 tracking-tight">Leads</h1>
-          <span className="text-xs text-zinc-600 tabular-nums font-mono">{total} leads</span>
+          <h1 className="text-sm font-semibold text-slate-900 tracking-tight">Leads</h1>
+          <span className="text-xs text-slate-500 tabular-nums font-mono">{total} leads</span>
         </div>
         <div className="flex items-center gap-2">
           <a
             href="http://localhost:3001/export?format=csv"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 border border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 text-xs font-medium rounded-md transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 text-slate-500 hover:text-slate-700 hover:border-slate-300 text-xs font-medium rounded-md transition-colors"
           >
             <ExportIcon />
             Export CSV
@@ -140,13 +140,13 @@ export default function LeadsContent(): React.ReactElement {
         </div>
       </div>
 
-      <div className="px-6 py-3 border-b border-zinc-800/80 flex items-center gap-4">
+      <div className="px-6 py-3 border-b border-slate-200 flex items-center gap-4">
         <div className="relative">
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
             <SearchIcon />
           </span>
           <input
-            className="pl-8 pr-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 w-60 transition-colors"
+            className="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-900 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 w-60 transition-colors"
             placeholder="Search leads..."
             value={filters.search ?? ''}
             onChange={e => updateFilters({ search: e.target.value })}
@@ -158,8 +158,8 @@ export default function LeadsContent(): React.ReactElement {
             onClick={() => updateFilters({ categorie: '' })}
             className={`px-3 py-1.5 text-xs font-medium transition-colors border-b-2 ${
               !filters.categorie
-                ? 'border-indigo-500 text-zinc-100'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-violet-600 text-slate-900'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
             All
@@ -170,8 +170,8 @@ export default function LeadsContent(): React.ReactElement {
               onClick={() => updateFilters({ categorie: filters.categorie === c ? '' : c })}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors border-b-2 ${
                 filters.categorie === c
-                  ? 'border-indigo-500 text-zinc-100'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                  ? 'border-violet-600 text-slate-900'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${TIER_DOT_COLORS[c]}`} />
@@ -181,7 +181,7 @@ export default function LeadsContent(): React.ReactElement {
         </div>
 
         <select
-          className="ml-auto px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md text-xs text-zinc-500 focus:outline-none focus:border-zinc-600 transition-colors"
+          className="ml-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-500 focus:outline-none focus:border-zinc-600 transition-colors"
           value={filters.statut ?? ''}
           onChange={e => updateFilters({ statut: e.target.value })}
         >
@@ -194,10 +194,10 @@ export default function LeadsContent(): React.ReactElement {
 
       <div className="flex-1 overflow-auto">
         <table className="w-full text-xs">
-          <thead className="sticky top-0 bg-zinc-950 border-b border-zinc-800/80">
+          <thead className="sticky top-0 bg-white border-b border-slate-200">
             <tr>
               {['Name', 'Company', 'Sector', 'Score', 'Tier', 'Status', 'Actions'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-left text-[10px] text-zinc-600 font-medium uppercase tracking-widest">
+                <th key={h} className="px-4 py-2.5 text-left text-[10px] text-slate-500 font-medium uppercase tracking-widest">
                   {h}
                 </th>
               ))}
@@ -206,12 +206,12 @@ export default function LeadsContent(): React.ReactElement {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="text-center py-16 text-zinc-600">
+                <td colSpan={7} className="text-center py-16 text-slate-500">
                   <div className="flex flex-col items-center gap-2">
-                    <svg className="animate-spin w-4 h-4 text-zinc-700" viewBox="0 0 24 24" fill="none">
+                    <svg className="animate-spin w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="40" strokeDashoffset="10" />
                     </svg>
-                    <span className="text-[11px] text-zinc-700">Loading...</span>
+                    <span className="text-[11px] text-slate-400">Loading...</span>
                   </div>
                 </td>
               </tr>
@@ -225,27 +225,27 @@ export default function LeadsContent(): React.ReactElement {
               leads.map(lead => (
                 <tr
                   key={lead.id}
-                  className="border-b border-zinc-800/40 hover:bg-zinc-900/30 transition-colors group"
+                  className="border-b border-slate-100 hover:bg-indigo-50/50 transition-colors group"
                 >
-                  <td className="px-4 py-2.5 font-medium text-zinc-200 whitespace-nowrap">
+                  <td className="px-4 py-2.5 font-medium text-slate-900 whitespace-nowrap">
                     {lead.nom}
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
-                    {lead.entreprise || <span className="text-zinc-700">—</span>}
+                  <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
+                    {lead.entreprise || <span className="text-slate-400">—</span>}
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-500 whitespace-nowrap">
-                    {lead.secteur || <span className="text-zinc-700">—</span>}
+                  <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
+                    {lead.secteur || <span className="text-slate-400">—</span>}
                   </td>
                   <td className="px-4 py-2.5">
                     <span className={`font-mono font-semibold tabular-nums ${getScoreColor(lead.score ?? 0, lead.categorie)}`}>
-                      {lead.score != null ? lead.score.toFixed(1) : <span className="text-zinc-700">—</span>}
+                      {lead.score != null ? lead.score.toFixed(1) : <span className="text-slate-400">—</span>}
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
                     {lead.categorie ? (
                       <TierBadge categorie={lead.categorie} />
                     ) : (
-                      <span className="text-zinc-700">—</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5">
@@ -266,25 +266,25 @@ export default function LeadsContent(): React.ReactElement {
       </div>
 
       {total > 0 && (
-        <div className="px-6 py-3 border-t border-zinc-800/80 flex items-center justify-between">
-          <span className="text-xs text-zinc-600 tabular-nums font-mono">
+        <div className="px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+          <span className="text-xs text-slate-500 tabular-nums font-mono">
             {from}–{to} of {total}
           </span>
           <div className="flex items-center gap-1">
             <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="px-2.5 py-1 border border-zinc-800 rounded text-xs text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1 border border-slate-200 rounded text-xs text-slate-500 hover:text-slate-700 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               ← Prev
             </button>
-            <span className="px-2.5 py-1 text-xs text-zinc-600 tabular-nums font-mono">
+            <span className="px-2.5 py-1 text-xs text-slate-500 tabular-nums font-mono">
               {page}
             </span>
             <button
               disabled={page * LIMIT >= total}
               onClick={() => setPage(page + 1)}
-              className="px-2.5 py-1 border border-zinc-800 rounded text-xs text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1 border border-slate-200 rounded text-xs text-slate-500 hover:text-slate-700 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               Next →
             </button>
