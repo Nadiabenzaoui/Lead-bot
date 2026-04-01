@@ -1,44 +1,52 @@
-import React from 'react';
-import type { Categorie, Statut } from '../../types';
-import { TIER_LABELS, TIER_COLORS, TIER_DOT_COLORS, STATUT_COLORS, STATUTS } from '../../constants';
+import { HTMLAttributes, forwardRef } from 'react';
+import { cn } from '../../utils/cn';
 
-interface TierBadgeProps {
-  categorie: Categorie;
+export interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'hot' | 'warm' | 'cold' | 'default';
 }
 
-export function TierBadge({ categorie }: TierBadgeProps) {
-  return (
-    <span className={`flex items-center gap-1.5 ${TIER_COLORS[categorie]}`}>
-      <span className={`inline-block w-1.5 h-1.5 rounded-full ${TIER_DOT_COLORS[categorie]}`} />
-      <span className="text-xs font-medium">{TIER_LABELS[categorie]}</span>
-    </span>
-  );
-}
-
-interface StatusBadgeProps {
-  statut: Statut;
-  onChange?: (statut: Statut) => void;
-  statuts?: readonly Statut[];
-}
-
-export function StatusBadge({ statut, onChange, statuts = STATUTS }: StatusBadgeProps) {
-  if (!onChange) {
+const Badge = forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant = 'default', ...props }, ref) => {
     return (
-      <span className={`text-xs px-2 py-0.5 rounded border ${STATUT_COLORS[statut]}`}>
-        {statut}
-      </span>
+      <div
+        ref={ref}
+        className={cn(
+          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2',
+          {
+            'bg-emerald-100/80 text-emerald-700 border border-emerald-200': variant === 'hot',
+            'bg-amber-100/80 text-amber-700 border border-amber-200': variant === 'warm',
+            'bg-slate-100 text-slate-600 border border-slate-200': variant === 'cold',
+            'bg-white text-slate-700 border border-slate-200': variant === 'default',
+          },
+          className
+        )}
+        {...props}
+      />
     );
+  }
+);
+Badge.displayName = 'Badge';
+
+export function TierBadge({ categorie }: { categorie: string }) {
+  const variant = categorie === 'CHAUD' ? 'hot'
+    : categorie === 'TIEDE' ? 'warm'
+      : categorie === 'FROID' ? 'cold' : 'default';
+  return <Badge variant={variant}>{categorie}</Badge>;
+}
+
+export function StatusBadge({ statut, onChange, statuts }: { statut: string, onChange?: (val: string) => void, statuts?: readonly string[] }) {
+  if (!onChange || !statuts) {
+    return <Badge>{statut}</Badge>;
   }
   return (
     <select
       value={statut}
-      onChange={e => onChange(e.target.value as Statut)}
-      className={`text-xs bg-transparent border rounded px-1.5 py-0.5 ${STATUT_COLORS[statut]}`}
+      onChange={e => onChange(e.target.value)}
+      className="bg-slate-50 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 outline-none"
     >
-      {statuts.map(s => (
-        <option key={s} value={s} className="bg-zinc-900 text-zinc-100">{s}</option>
-      ))}
+      {statuts.map(s => <option key={s} value={s}>{s}</option>)}
     </select>
   );
 }
 
+export { Badge };
