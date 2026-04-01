@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: leadbot
+      POSTGRES_PASSWORD: leadbot123
+      POSTGRES_DB: leadbot
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override local URLs to point to Docker services
+      DATABASE_URL: postgres://leadbot:leadbot123@postgres:5432/leadbot
+      REDIS_URL: redis://redis:6379
+      PORT: 3001
+    depends_on:
+      - postgres
+      - redis
+    # Le backend écoute en interne sur 3001, on le publie sur 4001 côté host
+    # pour éviter les conflits avec un backend déjà lancé en local.
+    ports:
+      - "4001:3001"
+
+  next-frontend:
+    build:
+      context: ./next-frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4001
+
+  scraper-go:
+    build:
+      context: ./scraper-go
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:7
+    # Redis est utilisé uniquement par les autres services dans le réseau Docker,
+    # pas besoin d'exposer le port sur la machine hôte.
+    ports: []
+
+volumes:
+  pgdata:

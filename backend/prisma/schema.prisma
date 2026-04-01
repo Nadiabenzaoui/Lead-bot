@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id         String    @id @default(uuid())
+  nom        String
+  email      String?
+  secteur    String?
+  score      Float     @default(0)
+  categorie  Categorie @default(FROID)
+  statut     Statut    @default(NOUVEAU)
+  source     String?
+  titre      String?
+  entreprise String?
+  linkedinUrl String?
+  telephone  String?
+  taille     String?
+  notes      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  messages   Message[]
+
+  @@map("leads")
+}
+
+model Message {
+  id        String        @id @default(uuid())
+  leadId    String
+  canal     Canal
+  statut    StatutMessage @default(ENVOYE)
+  opened    Boolean       @default(false)
+  clicked   Boolean       @default(false)
+  replied   Boolean       @default(false)
+  content   String?
+  sentAt    DateTime      @default(now())
+
+  lead      Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model BotJob {
+  id        String    @id @default(uuid())
+  status    String    @default("idle")
+  startedAt DateTime?
+  stoppedAt DateTime?
+  config    Json?
+  createdAt DateTime  @default(now())
+
+  @@map("bot_jobs")
+}
+
+enum Categorie {
+  CHAUD
+  TIEDE
+  FROID
+}
+
+enum Statut {
+  NOUVEAU
+  CONTACTE
+  EN_COURS
+  CONVERTI
+  PERDU
+  BLACKLIST
+}
+
+enum Canal {
+  EMAIL
+  LINKEDIN
+  WHATSAPP
+  SMS
+}
+
+enum StatutMessage {
+  ENVOYE
+  ECHEC
+  EN_ATTENTE
+}
+ 
