@@ -26,14 +26,14 @@ export function Sidebar() {
         setUser(JSON.parse(rawUser));
       } catch (e) {}
     } else {
-      router.push('/login');
+      router.push('/');
     }
   }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem('leadbot_token');
     localStorage.removeItem('leadbot_user');
-    router.push('/login');
+    router.push('/');
   };
 
   const getInitials = (name?: string) => {

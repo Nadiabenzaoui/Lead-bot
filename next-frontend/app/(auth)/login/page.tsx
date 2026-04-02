@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -85,7 +85,7 @@ export default function AuthPage() {
                     required={!isLogin}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Jane Doe"
+                    placeholder=""
                     className="block w-full rounded-md border-0 py-2 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-violet-700 sm:text-sm sm:leading-6 outline-none"
                   />
                 </div>
@@ -105,7 +105,7 @@ export default function AuthPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com"
+                  placeholder=""
                   className="block w-full rounded-md border-0 py-2 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-violet-700 sm:text-sm sm:leading-6 outline-none"
                 />
               </div>
@@ -124,7 +124,7 @@ export default function AuthPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder=""
                   className="block w-full rounded-md border-0 py-2 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-violet-700 sm:text-sm sm:leading-6 outline-none"
                 />
               </div>

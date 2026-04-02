@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '../../../components/ui/Button';
 import api from '../../../utils/api';
 import { Send, Bot, FileText, CheckCircle, AlertCircle, Zap } from 'lucide-react';
@@ -46,9 +47,15 @@ const TEMPLATE_LABELS: Record<string, string> = {
 
 type Result = { ok: boolean; message: string } | null;
 
-export default function SendPage() {
+function SendPage() {
+  const searchParams = useSearchParams();
   const [leadId, setLeadId] = useState('');
   const [canal, setCanal] = useState<string>('EMAIL');
+
+  useEffect(() => {
+    const id = searchParams.get('leadId');
+    if (id) setLeadId(id);
+  }, [searchParams]);
   const [templateKey, setTemplateKey] = useState<string>('cold_email');
   const [customMessage, setCustomMessage] = useState('');
   const [useAI, setUseAI] = useState(false);
@@ -246,12 +253,20 @@ export default function SendPage() {
             <div className="flex items-start gap-2">
               <AlertCircle size={13} className="text-amber-500 mt-0.5 shrink-0" />
               <p className="text-[11px] text-amber-700 leading-relaxed">
-                <span className="font-semibold">Tip:</span> Find the Lead ID in your Leads Pipeline table. Click the ··· menu on any lead and copy its ID.
+                <span className="font-semibold">Tip:</span> Dans Leads Pipeline, clique sur ··· puis <strong>Send message</strong> pour arriver ici avec le Lead ID déjà rempli.
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SendPageWrapper() {
+  return (
+    <Suspense>
+      <SendPage />
+    </Suspense>
   );
 }

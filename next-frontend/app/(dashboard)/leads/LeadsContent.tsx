@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLeads } from '../../../hooks/useLeads';
 import { TierBadge, StatusBadge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
@@ -46,6 +47,15 @@ function DotsIcon(): React.ReactElement {
   );
 }
 
+function SendIcon(): React.ReactElement {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13" />
+      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+    </svg>
+  );
+}
+
 interface ActionMenuProps {
   leadId: string;
   onDelete: (id: string) => void;
@@ -53,7 +63,9 @@ interface ActionMenuProps {
 
 function ActionMenu({ leadId, onDelete }: ActionMenuProps): React.ReactElement {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -62,6 +74,17 @@ function ActionMenu({ leadId, onDelete }: ActionMenuProps): React.ReactElement {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const handleCopyId = () => {
+    navigator.clipboard.writeText(leadId);
+    setCopied(true);
+    setTimeout(() => { setCopied(false); setOpen(false); }, 1200);
+  };
+
+  const handleSend = () => {
+    setOpen(false);
+    router.push(`/send?leadId=${leadId}`);
+  };
 
   return (
     <div className="relative" ref={ref}>
@@ -72,12 +95,37 @@ function ActionMenu({ leadId, onDelete }: ActionMenuProps): React.ReactElement {
         <DotsIcon />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-36 bg-slate-50 border border-slate-200 rounded-lg shadow-xl z-20 py-1 overflow-hidden">
+        <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-xl z-20 py-1 overflow-hidden">
+          <button
+            onClick={handleSend}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-colors text-left"
+          >
+            <SendIcon />
+            Send message
+          </button>
+          <button
+            onClick={handleCopyId}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors text-left"
+          >
+            {copied ? (
+              <>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span className="text-emerald-600">Copied!</span>
+              </>
+            ) : (
+              <>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy ID
+              </>
+            )}
+          </button>
+          <div className="h-px bg-slate-100 my-1" />
           <button
             onClick={() => { onDelete(leadId); setOpen(false); }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-50 transition-colors text-left"
           >
-            Delete lead
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Delete
           </button>
         </div>
       )}
@@ -108,6 +156,7 @@ const STATUT_LABELS: Record<string, string> = {
 
 export default function LeadsContent(): React.ReactElement {
   const { leads, total, loading, filters, updateFilters, setPage, deleteLead, updateStatut } = useLeads();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
   const page = filters.page ?? 1;
   const from = (page - 1) * LIMIT + 1;
@@ -127,7 +176,7 @@ export default function LeadsContent(): React.ReactElement {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="http://localhost:3001/export?format=csv"
+            href={`${apiUrl}/export?format=csv`}
             className="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 text-slate-500 hover:text-slate-700 hover:border-slate-300 text-xs font-medium rounded-md transition-colors"
           >
             <ExportIcon />
@@ -146,7 +195,7 @@ export default function LeadsContent(): React.ReactElement {
             <SearchIcon />
           </span>
           <input
-            className="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-900 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 w-60 transition-colors"
+            className="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-900 placeholder-zinc-600 focus:outline-none focus:border-violet-400 w-60 transition-colors"
             placeholder="Search leads..."
             value={filters.search ?? ''}
             onChange={e => updateFilters({ search: e.target.value })}
@@ -181,7 +230,7 @@ export default function LeadsContent(): React.ReactElement {
         </div>
 
         <select
-          className="ml-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-500 focus:outline-none focus:border-zinc-600 transition-colors"
+          className="ml-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-500 focus:outline-none focus:border-violet-400 transition-colors"
           value={filters.statut ?? ''}
           onChange={e => updateFilters({ statut: e.target.value })}
         >
@@ -196,7 +245,7 @@ export default function LeadsContent(): React.ReactElement {
         <table className="w-full text-xs">
           <thead className="sticky top-0 bg-white border-b border-slate-200">
             <tr>
-              {['Name', 'Company', 'Sector', 'Score', 'Tier', 'Status', 'Actions'].map(h => (
+              {['Name', 'Company', 'Source', 'Score', 'Tier', 'Status', 'Actions'].map(h => (
                 <th key={h} className="px-4 py-2.5 text-left text-[10px] text-slate-500 font-medium uppercase tracking-widest">
                   {h}
                 </th>
@@ -228,24 +277,33 @@ export default function LeadsContent(): React.ReactElement {
                   className="border-b border-slate-100 hover:bg-indigo-50/50 transition-colors group"
                 >
                   <td className="px-4 py-2.5 font-medium text-slate-900 whitespace-nowrap">
-                    {lead.nom}
+                    <div>{lead.nom}</div>
+                    {lead.email && (
+                      <div className="text-[11px] text-slate-400 font-normal mt-0.5">{lead.email}</div>
+                    )}
                   </td>
                   <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
-                    {lead.entreprise || <span className="text-slate-400">—</span>}
+                    {lead.entreprise || <span className="text-slate-300">—</span>}
                   </td>
-                  <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
-                    {lead.secteur || <span className="text-slate-400">—</span>}
+                  <td className="px-4 py-2.5 whitespace-nowrap">
+                    {lead.source ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] text-slate-500 font-medium">
+                        {lead.source}
+                      </span>
+                    ) : (
+                      <span className="text-slate-300">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-2.5">
                     <span className={`font-mono font-semibold tabular-nums ${getScoreColor(lead.score ?? 0, lead.categorie)}`}>
-                      {lead.score != null ? lead.score.toFixed(1) : <span className="text-slate-400">—</span>}
+                      {lead.score != null ? lead.score.toFixed(1) : <span className="text-slate-300">—</span>}
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
                     {lead.categorie ? (
                       <TierBadge categorie={lead.categorie} />
                     ) : (
-                      <span className="text-slate-400">—</span>
+                      <span className="text-slate-300">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5">
@@ -294,4 +352,3 @@ export default function LeadsContent(): React.ReactElement {
     </div>
   );
 }
-
