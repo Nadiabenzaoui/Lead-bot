@@ -27,12 +27,27 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
 );
 Badge.displayName = 'Badge';
 
+const TIER_DISPLAY: Record<string, string> = {
+  CHAUD: 'Tier A',
+  TIEDE: 'Tier B',
+  FROID: 'Tier C',
+};
+
 export function TierBadge({ categorie }: { categorie: string }) {
   const variant = categorie === 'CHAUD' ? 'hot'
     : categorie === 'TIEDE' ? 'warm'
       : categorie === 'FROID' ? 'cold' : 'default';
-  return <Badge variant={variant}>{categorie}</Badge>;
+  return <Badge variant={variant}>{TIER_DISPLAY[categorie] ?? categorie}</Badge>;
 }
+
+const STATUT_LABELS: Record<string, string> = {
+  NOUVEAU: 'New',
+  CONTACTE: 'Contacted',
+  EN_COURS: 'In Progress',
+  CONVERTI: 'Converted',
+  PERDU: 'Lost',
+  BLACKLIST: 'Blacklist',
+};
 
 export function StatusBadge({ statut, onChange, statuts }: { statut: string, onChange?: (val: string) => void, statuts?: readonly string[] }) {
   if (!onChange || !statuts) {
@@ -44,7 +59,7 @@ export function StatusBadge({ statut, onChange, statuts }: { statut: string, onC
       onChange={e => onChange(e.target.value)}
       className="bg-indigo-50 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-indigo-200 text-violet-800 focus:outline-none focus:ring-1 focus:ring-violet-400 outline-none"
     >
-      {statuts.map(s => <option key={s} value={s}>{s}</option>)}
+      {statuts.map(s => <option key={s} value={s}>{STATUT_LABELS[s] ?? s}</option>)}
     </select>
   );
 }

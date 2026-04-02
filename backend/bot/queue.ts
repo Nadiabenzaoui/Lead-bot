@@ -34,15 +34,18 @@ botQueue.process('scrape-and-send', async (job) => {
 
   emit('bot:log', { message: `Démarrage scraping: "${keywords}"`, step: 'scrape' });
 
-  // 1. Scrape
+  // 1. Scrape via Hunter.io
   let leads: any[] = await LeadScraper.scrapeLinkedIn({ keywords, location, limit });
-  emit('bot:log', { message: `${leads.length} leads scrapés`, step: 'scrape' });
+  emit('bot:log', { message: `${leads.length} leads trouvés via Hunter.io pour "${keywords}"`, step: 'scrape' });
 
-  // 2. Enrich
-  emit('bot:log', { message: 'Enrichissement emails...', step: 'enrich' });
-  leads = await LeadEnricher.enrichBatch(leads);
+  // 2. Enrich (emails déjà inclus par Hunter.io, enrichissement complémentaire si manquant)
+  emit('bot:log', { message: 'Enrichissement des leads sans email...', step: 'enrich' });
+  const withoutEmail = leads.filter((l) => !l.email);
+  if (withoutEmail.length > 0) {
+    leads = await LeadEnricher.enrichBatch(leads);
+  }
   const enriched = leads.filter((l) => l.email).length;
-  emit('bot:log', { message: `${enriched} emails trouvés`, step: 'enrich' });
+  emit('bot:log', { message: `${enriched}/${leads.length} leads avec email`, step: 'enrich' });
 
   // 3. Score
   leads = LeadScorer.scoreBatch(leads);

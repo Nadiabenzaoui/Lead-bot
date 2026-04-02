@@ -1,8 +1,54 @@
 "use client";
 
-import { Card } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
-import { Users, Zap, CheckCircle2, MoreHorizontal, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Users, Zap, CheckCircle2, MoreHorizontal, ArrowUpRight, TrendingUp, LayoutDashboard } from 'lucide-react';
+
+const kpis = [
+  {
+    label: 'Nouveaux leads',
+    value: '128',
+    trend: '+24%',
+    sub: 'vs. last week',
+    icon: Users,
+    accent: 'bg-violet-500',
+    iconBg: 'bg-violet-50',
+    iconColor: 'text-violet-600',
+    trendColor: 'text-violet-600 bg-violet-50',
+  },
+  {
+    label: 'Campagnes actives',
+    value: '4',
+    trend: null,
+    sub: 'Bot en cours',
+    icon: Zap,
+    accent: 'bg-fuchsia-500',
+    iconBg: 'bg-fuchsia-50',
+    iconColor: 'text-fuchsia-600',
+    trendColor: '',
+  },
+  {
+    label: 'Taux de réponse',
+    value: '18.4%',
+    trend: '+3.1%',
+    sub: 'vs. période précédente',
+    icon: ArrowUpRight,
+    accent: 'bg-blue-500',
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    trendColor: 'text-blue-600 bg-blue-50',
+  },
+  {
+    label: 'Deals gagnés',
+    value: '12',
+    trend: null,
+    sub: 'Basé sur les statuts',
+    icon: CheckCircle2,
+    accent: 'bg-emerald-500',
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    trendColor: '',
+  },
+];
 
 export default function DashboardPage() {
   return (
@@ -10,150 +56,117 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="flex items-center justify-between mb-8">
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <LayoutDashboard size={14} className="text-slate-400" />
+            <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Overview</span>
+          </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-1">Vue d'ensemble de ta prospection.</p>
+          <p className="text-sm text-slate-500 mt-0.5">Vue d'ensemble de ta prospection.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent cursor-pointer">
-            <option>7 derniers jours</option>
-            <option>30 derniers jours</option>
-            <option>Cette semaine</option>
-            <option>Ce mois</option>
-          </select>
-        </div>
+        <select className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer transition-all">
+          <option>7 derniers jours</option>
+          <option>30 derniers jours</option>
+          <option>Cette semaine</option>
+          <option>Ce mois</option>
+        </select>
       </header>
 
-      {/* Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-slate-500">Nouveaux leads</p>
-            <div className="p-2 bg-violet-50 rounded-lg">
-              <Users size={16} className="text-violet-600" />
+      {/* KPI Cards */}
+      <section className="grid grid-cols-4 gap-4 mb-8">
+        {kpis.map(kpi => (
+          <div key={kpi.label} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${kpi.accent} rounded-l-xl`} />
+            <div className="flex items-start justify-between mb-3">
+              <p className="text-xs font-medium text-slate-500">{kpi.label}</p>
+              <div className={`p-1.5 rounded-lg ${kpi.iconBg}`}>
+                <kpi.icon size={14} className={kpi.iconColor} />
+              </div>
             </div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-900">128</p>
-            <span className="flex items-center text-xs font-medium text-violet-600">
-              <TrendingUp size={12} className="mr-1" />
-              +24%
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">vs. semaine dernière</p>
-        </Card>
-
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-slate-500">Campagnes actives</p>
-            <div className="p-2 bg-fuchsia-50 rounded-lg">
-              <Zap size={16} className="text-fuchsia-600" />
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-slate-900 tabular-nums">{kpi.value}</p>
+              {kpi.trend && (
+                <span className={`flex items-center gap-0.5 text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${kpi.trendColor}`}>
+                  <TrendingUp size={10} />
+                  {kpi.trend}
+                </span>
+              )}
             </div>
+            <p className="text-[11px] text-slate-400 mt-1">{kpi.sub}</p>
           </div>
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-900">4</p>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">Bot en cours d'exécution</p>
-        </Card>
-
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-slate-500">Taux de réponse</p>
-            <div className="p-2 bg-indigo-50/80 rounded-lg">
-              <ArrowUpRight size={16} className="text-indigo-600" />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-900">18.4%</p>
-            <span className="flex items-center text-xs font-medium text-violet-600">
-              <TrendingUp size={12} className="mr-1" />
-              +3.1%
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">vs. période précédente</p>
-        </Card>
-
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-slate-500">Deals gagnés</p>
-            <div className="p-2 bg-purple-100/50 rounded-lg">
-              <CheckCircle2 size={16} className="text-purple-700" />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-900">12</p>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">Basé sur les statuts des leads</p>
-        </Card>
+        ))}
       </section>
 
       {/* Main Content */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="col-span-1 lg:col-span-2 p-6">
+      <section className="grid grid-cols-3 gap-6">
+        {/* Activity */}
+        <div className="col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-base font-semibold text-slate-900">Activité récente</h2>
-            <button className="text-slate-400 hover:text-slate-600 transition-colors">
-              <MoreHorizontal size={20} />
+            <h2 className="text-sm font-semibold text-slate-900">Activité récente</h2>
+            <button className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
+              <MoreHorizontal size={16} />
             </button>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="flex gap-4">
-              <div className="relative mt-1">
-                <div className="absolute inset-x-0 top-6 -bottom-6 w-px bg-slate-200 left-1/2 -translate-x-1/2"></div>
-                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-violet-500 ring-4 ring-white"></div>
+              <div className="relative mt-1 shrink-0">
+                <div className="absolute left-1/2 top-5 bottom-0 -translate-x-1/2 w-px bg-slate-100" />
+                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-violet-500 ring-4 ring-violet-50" />
               </div>
-              <div>
-                <p className="text-sm text-slate-900">8 nouveaux leads <Badge variant="hot" className="ml-1 scale-90 origin-left">CHAUD</Badge></p>
-                <p className="text-xs text-slate-500 mt-1">Importés depuis LinkedIn • Il y a 2h</p>
+              <div className="pb-5">
+                <p className="text-sm text-slate-900">
+                  8 nouveaux leads{' '}
+                  <Badge variant="hot" className="ml-1 scale-90 origin-left">Tier A</Badge>
+                </p>
+                <p className="text-xs text-slate-400 mt-1">Importés depuis Hunter.io · Il y a 2h</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="relative mt-1">
-                <div className="absolute inset-x-0 top-6 -bottom-6 w-px bg-slate-200 left-1/2 -translate-x-1/2"></div>
-                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-indigo-500 ring-4 ring-white"></div>
+              <div className="relative mt-1 shrink-0">
+                <div className="absolute left-1/2 top-5 bottom-0 -translate-x-1/2 w-px bg-slate-100" />
+                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-blue-400 ring-4 ring-blue-50" />
               </div>
-              <div>
+              <div className="pb-5">
                 <p className="text-sm text-slate-900">2 campagnes email ont été lancées.</p>
-                <p className="text-xs text-slate-500 mt-1">Séquence SaaS CTO • Il y a 5h</p>
+                <p className="text-xs text-slate-400 mt-1">Séquence SaaS CTO · Il y a 5h</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="relative mt-1">
-                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white"></div>
+              <div className="relative mt-1 shrink-0">
+                <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-slate-50" />
               </div>
               <div>
-                <p className="text-sm text-slate-900">5 leads marqués comme <Badge variant="cold" className="ml-1 scale-90 origin-left">CONVERTI</Badge></p>
-                <p className="text-xs text-slate-500 mt-1">Par Nadia Benzaoui • Hier</p>
+                <p className="text-sm text-slate-900">
+                  5 leads marqués comme{' '}
+                  <Badge variant="cold" className="ml-1 scale-90 origin-left">Converted</Badge>
+                </p>
+                <p className="text-xs text-slate-400 mt-1">Par Nadia Benzaoui · Hier</p>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-6">
-          <h2 className="text-base font-semibold text-slate-900 mb-6">À traiter aujourd'hui</h2>
-          <div className="space-y-4">
-            <div className="group flex flex-col p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-100 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-slate-900">Relancer 12 leads</span>
-                <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+        {/* Today's tasks */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-slate-900 mb-5">À traiter aujourd'hui</h2>
+          <div className="space-y-3">
+            {[
+              { title: 'Relancer 12 leads', desc: "Tier B sans réponse depuis 4 jours.", dot: 'bg-orange-400' },
+              { title: 'Vérifier bounces', desc: 'Dernière campagne : 3 adresses erronées.', dot: 'bg-red-400' },
+              { title: 'Nouvelle séquence', desc: 'Configurer les emails pour les CTO SaaS.', dot: 'bg-slate-300' },
+            ].map((task) => (
+              <div
+                key={task.title}
+                className="flex flex-col p-3 rounded-lg border border-slate-100 hover:bg-violet-50/30 hover:border-violet-100 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-900 group-hover:text-violet-900 transition-colors">{task.title}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full ${task.dot}`} />
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed">{task.desc}</p>
               </div>
-              <p className="text-xs text-slate-500 line-clamp-1">Leads 'TIEDE' n'ayant pas répondu depuis 4 jours.</p>
-            </div>
-            <div className="group flex flex-col p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-100 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-slate-900">Vérifier bounces</span>
-                <span className="w-2 h-2 rounded-full bg-red-400"></span>
-              </div>
-              <p className="text-xs text-slate-500 line-clamp-1">Dernière campagne : 3 adresses erronées.</p>
-            </div>
-            <div className="group flex flex-col p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-100 hover:shadow-sm transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-slate-900">Nouvelle séquence</span>
-                <span className="w-2 h-2 rounded-full bg-slate-300"></span>
-              </div>
-              <p className="text-xs text-slate-500 line-clamp-1">Configurer les emails pour les CTO SaaS.</p>
-            </div>
+            ))}
           </div>
-        </Card>
+        </div>
       </section>
     </div>
   );
