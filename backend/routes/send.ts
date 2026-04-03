@@ -1,14 +1,15 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
+import { config } from '../config';
 import EmailService from '../services/EmailService';
 import LinkedInService from '../services/LinkedInService';
 import WhatsAppService from '../services/WhatsAppService';
 import SMSService from '../services/SMSService';
+import TelegramService from '../services/TelegramService';
 import AIProfiler from '../services/AIProfiler';
 import TemplateEngine from '../services/TemplateEngine';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 router.post('/', async (req: Request, res: Response) => {
   try {
@@ -32,7 +33,7 @@ router.post('/', async (req: Request, res: Response) => {
         prenom: lead.nom.split(' ')[0],
         entreprise: lead.entreprise || '',
         secteur: lead.secteur || '',
-        expediteur: process.env.FROM_NAME,
+        expediteur: config.email.fromName,
       });
       message = rendered.html || rendered.text;
     }
@@ -59,6 +60,10 @@ router.post('/', async (req: Request, res: Response) => {
       case 'SMS':
         if (!lead.telephone) return res.status(400).json({ error: 'No phone number' });
         result = await SMSService.send({ leadId, to: lead.telephone, body: message || '' });
+        break;
+      case 'TELEGRAM':
+        if (!lead.telegramId) return res.status(400).json({ error: 'No Telegram ID for this lead' });
+        result = await TelegramService.send({ leadId, chatId: lead.telegramId, text: message || '' });
         break;
       default:
         return res.status(400).json({ error: 'Invalid canal' });

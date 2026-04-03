@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { config } from '../config';
+import { logMessage } from '../lib/logMessage';
 
 interface SendOptions {
   leadId: string;
@@ -16,11 +15,11 @@ class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.BREVO_SMTP_HOST || 'smtp-relay.brevo.com',
-      port: parseInt(process.env.BREVO_SMTP_PORT || '587'),
+      host: config.email.host,
+      port: config.email.port,
       auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: process.env.BREVO_SMTP_PASS,
+        user: config.email.user,
+        pass: config.email.pass,
       },
     });
   }
@@ -28,22 +27,17 @@ class EmailService {
   async send({ leadId, to, subject, html, text }: SendOptions): Promise<{ success: boolean }> {
     try {
       await this.transporter.sendMail({
-        from: `"${process.env.FROM_NAME}" <${process.env.FROM_EMAIL}>`,
+        from: `"${config.email.fromName}" <${config.email.fromEmail}>`,
         to,
         subject,
         html,
         text,
       });
 
-      await prisma.message.create({
-        data: { leadId, canal: 'EMAIL', statut: 'ENVOYE', content: subject || '' },
-      });
-
+      await logMessage({ leadId, canal: 'EMAIL', statut: 'ENVOYE', content: subject || '' });
       return { success: true };
     } catch (err: any) {
-      await prisma.message.create({
-        data: { leadId, canal: 'EMAIL', statut: 'ECHEC', content: err.message },
-      });
+      await logMessage({ leadId, canal: 'EMAIL', statut: 'ECHEC', content: err.message });
       throw err;
     }
   }

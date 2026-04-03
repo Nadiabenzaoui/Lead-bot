@@ -1,6 +1,6 @@
 export type Categorie = 'CHAUD' | 'TIEDE' | 'FROID';
 export type Statut = 'NOUVEAU' | 'CONTACTE' | 'EN_COURS' | 'CONVERTI' | 'PERDU' | 'BLACKLIST';
-export type Canal = 'EMAIL' | 'LINKEDIN' | 'WHATSAPP' | 'SMS';
+export type Canal = 'EMAIL' | 'LINKEDIN' | 'WHATSAPP' | 'SMS' | 'TELEGRAM';
 export type StatutMessage = 'ENVOYE' | 'ECHEC' | 'EN_ATTENTE';
 
 export interface Message {
@@ -30,6 +30,7 @@ export interface Lead {
   telephone?: string;
   taille?: string;
   notes?: string;
+  telegramId?: string;
   createdAt: string;
   updatedAt: string;
   messages?: Message[];

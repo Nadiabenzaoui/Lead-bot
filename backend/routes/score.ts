@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient, Categorie } from '@prisma/client';
+import { Categorie } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import LeadScorer from '../services/LeadScorer';
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
 
 router.post('/', async (req: Request, res: Response) => {
   try {

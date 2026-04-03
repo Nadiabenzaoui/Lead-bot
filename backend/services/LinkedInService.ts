@@ -1,7 +1,6 @@
 import { chromium } from 'playwright';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { config } from '../config';
+import { logMessage } from '../lib/logMessage';
 
 interface SendMessageOptions {
   leadId: string;
@@ -13,7 +12,7 @@ class LinkedInService {
   async sendMessage({ leadId, profileUrl, message }: SendMessageOptions): Promise<{ success: boolean }> {
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
-      extraHTTPHeaders: { Cookie: `li_at=${process.env.LINKEDIN_COOKIE}` },
+      extraHTTPHeaders: { Cookie: `li_at=${config.linkedin.cookie}` },
     });
     const page = await context.newPage();
 
@@ -28,15 +27,10 @@ class LinkedInService {
       await page.click('button[type="submit"]');
       await page.waitForTimeout(1000);
 
-      await prisma.message.create({
-        data: { leadId, canal: 'LINKEDIN', statut: 'ENVOYE', content: message.slice(0, 200) },
-      });
-
+      await logMessage({ leadId, canal: 'LINKEDIN', statut: 'ENVOYE', content: message });
       return { success: true };
     } catch (err: any) {
-      await prisma.message.create({
-        data: { leadId, canal: 'LINKEDIN', statut: 'ECHEC', content: err.message },
-      });
+      await logMessage({ leadId, canal: 'LINKEDIN', statut: 'ECHEC', content: err.message });
       throw err;
     } finally {
       await browser.close();

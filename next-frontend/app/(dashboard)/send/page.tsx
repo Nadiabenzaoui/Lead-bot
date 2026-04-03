@@ -28,6 +28,11 @@ const CANAL_ICONS: Record<string, React.ReactNode> = {
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.35 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
     </svg>
   ),
+  TELEGRAM: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.27 13.602l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.883.957z"/>
+    </svg>
+  ),
 };
 
 const CANAL_ACTIVE: Record<string, string> = {
@@ -35,6 +40,7 @@ const CANAL_ACTIVE: Record<string, string> = {
   LINKEDIN: 'border-blue-300 bg-blue-50 text-blue-700',
   WHATSAPP: 'border-emerald-300 bg-emerald-50 text-emerald-700',
   SMS: 'border-amber-300 bg-amber-50 text-amber-700',
+  TELEGRAM: 'border-sky-300 bg-sky-50 text-sky-700',
 };
 
 const TEMPLATE_LABELS: Record<string, string> = {
@@ -43,6 +49,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
   followup_j7: 'Follow-up J+7',
   linkedin_connect: 'LinkedIn Connect',
   sms: 'SMS Short',
+  telegram_intro: 'Telegram Intro',
 };
 
 type Result = { ok: boolean; message: string } | null;
@@ -118,7 +125,7 @@ function SendPage() {
             {/* Channel */}
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1.5">Channel</label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-5 gap-2">
                 {CANALS.map(c => (
                   <button
                     key={c}

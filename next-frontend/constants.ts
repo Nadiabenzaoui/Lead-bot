@@ -1,5 +1,41 @@
 import type { Categorie, Statut, Canal } from './types';
 
+export const TIER_BAR_COLORS: Record<Categorie, string> = {
+  CHAUD: 'bg-violet-500',
+  TIEDE: 'bg-fuchsia-400',
+  FROID: 'bg-slate-300',
+};
+
+export const TIER_BAR_TEXT: Record<Categorie, string> = {
+  CHAUD: 'text-violet-700',
+  TIEDE: 'text-fuchsia-600',
+  FROID: 'text-slate-500',
+};
+
+export const CANAL_LABELS: Record<Canal, string> = {
+  EMAIL: 'Email',
+  LINKEDIN: 'LinkedIn',
+  WHATSAPP: 'WhatsApp',
+  SMS: 'SMS',
+  TELEGRAM: 'Telegram',
+};
+
+export const CANAL_BAR_COLORS: Record<Canal, string> = {
+  EMAIL: 'bg-violet-500',
+  LINKEDIN: 'bg-blue-500',
+  WHATSAPP: 'bg-emerald-500',
+  SMS: 'bg-amber-500',
+  TELEGRAM: 'bg-sky-500',
+};
+
+export const CANAL_TEXT_COLORS: Record<Canal, string> = {
+  EMAIL: 'text-violet-600',
+  LINKEDIN: 'text-blue-600',
+  WHATSAPP: 'text-emerald-600',
+  SMS: 'text-amber-600',
+  TELEGRAM: 'text-sky-600',
+};
+
 export const TIER_LABELS: Record<Categorie, string> = {
   CHAUD: 'Tier A',
   TIEDE: 'Tier B',
@@ -29,6 +65,6 @@ export const STATUT_COLORS: Record<Statut, string> = {
 
 export const STATUTS: readonly Statut[] = ['NOUVEAU', 'CONTACTE', 'EN_COURS', 'CONVERTI', 'PERDU', 'BLACKLIST'];
 export const CATEGORIES: readonly Categorie[] = ['CHAUD', 'TIEDE', 'FROID'];
-export const CANALS: readonly Canal[] = ['EMAIL', 'LINKEDIN', 'WHATSAPP', 'SMS'];
-export const TEMPLATES = ['cold_email', 'followup_j3', 'followup_j7', 'linkedin_connect', 'sms'] as const;
+export const CANALS: readonly Canal[] = ['EMAIL', 'LINKEDIN', 'WHATSAPP', 'SMS', 'TELEGRAM'];
+export const TEMPLATES = ['cold_email', 'followup_j3', 'followup_j7', 'linkedin_connect', 'sms', 'telegram_intro'] as const;
 

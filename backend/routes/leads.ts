@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import { botQueue } from '../bot/queue';
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
 
 // GET /leads — list with filters
 router.get('/', async (req: Request, res: Response) => {

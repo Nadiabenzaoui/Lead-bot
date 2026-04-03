@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { config } from '../config';
+
+const HUNTER_DELAY_MS = 300;
 
 interface Lead {
   nom: string;
@@ -25,7 +28,7 @@ class LeadEnricher {
           domain,
           first_name: firstName,
           last_name: lastName,
-          api_key: process.env.HUNTER_API_KEY,
+          api_key: config.hunter.apiKey,
         },
       });
 
@@ -41,7 +44,7 @@ class LeadEnricher {
   async _getDomain(company: string): Promise<string | null> {
     try {
       const res = await axios.get('https://api.hunter.io/v2/domain-search', {
-        params: { company, api_key: process.env.HUNTER_API_KEY, limit: 1 },
+        params: { company, api_key: config.hunter.apiKey, limit: 1 },
       });
       return res.data?.data?.domain || null;
     } catch {
@@ -54,7 +57,7 @@ class LeadEnricher {
     for (const lead of leads) {
       const enriched = await this.enrichFromHunter(lead);
       results.push(enriched);
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, HUNTER_DELAY_MS));
     }
     return results;
   }

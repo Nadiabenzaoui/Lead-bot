@@ -20,22 +20,23 @@ model User {
 }
 
 model Lead {
-  id         String    @id @default(uuid())
-  nom        String
-  email      String?
-  secteur    String?
-  score      Float     @default(0)
-  categorie  Categorie @default(FROID)
-  statut     Statut    @default(NOUVEAU)
-  source     String?
-  titre      String?
-  entreprise String?
-  linkedinUrl String?
-  telephone  String?
-  taille     String?
-  notes      String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  nom             String
+  email           String?
+  secteur         String?
+  score           Float     @default(0)
+  categorie       Categorie @default(FROID)
+  statut          Statut    @default(NOUVEAU)
+  source          String?
+  titre           String?
+  entreprise      String?
+  linkedinUrl     String?
+  telephone       String?
+  taille          String?
+  notes           String?
+  telegramId      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   messages   Message[]
 
@@ -71,6 +72,7 @@ model BotJob {
 
 enum Categorie {
   CHAUD
+  
   TIEDE
   FROID
 }
@@ -89,6 +91,7 @@ enum Canal {
   LINKEDIN
   WHATSAPP
   SMS
+  TELEGRAM
 }
 
 enum StatutMessage {

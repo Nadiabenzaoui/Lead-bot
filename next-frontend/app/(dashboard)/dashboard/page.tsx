@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
-import { Users, MessageSquare, CheckCircle2, MoreHorizontal, TrendingUp, LayoutDashboard, Reply } from 'lucide-react';
+import { Users, MessageSquare, CheckCircle2, TrendingUp, LayoutDashboard, Reply } from 'lucide-react';
 import api from '../../../utils/api';
+import { TIER_BAR_COLORS, TIER_BAR_TEXT, TIER_LABELS } from '../../../constants';
 
 interface DashboardData {
   totalLeads: number;
@@ -13,15 +14,10 @@ interface DashboardData {
   recentLeads: { nom: string; score: number; categorie: string; createdAt: string }[];
 }
 
-const TIER_COLORS: Record<string, string> = {
-  CHAUD: 'bg-violet-500',
-  TIEDE: 'bg-fuchsia-400',
-  FROID: 'bg-slate-300',
-};
-
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -35,7 +31,9 @@ export default function DashboardPage() {
         dealsWon: convertedRes.data.total,
         recentLeads: monitorRes.data.recentLeads,
       });
-    }).catch(() => {}).finally(() => setLoading(false));
+    }).catch((err: any) => {
+      setError(err.response?.data?.error ?? err.message);
+    }).finally(() => setLoading(false));
   }, []);
 
   const kpis = data ? [
@@ -89,6 +87,12 @@ export default function DashboardPage() {
           <p className="text-sm text-slate-500 mt-0.5">Vue d'ensemble de ta prospection.</p>
         </div>
       </header>
+
+      {error && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-xs text-red-700">
+          Erreur de chargement : {error}
+        </div>
+      )}
 
       {/* KPI Cards */}
       <section className="grid grid-cols-4 gap-4 mb-8">
@@ -152,7 +156,7 @@ export default function DashboardPage() {
                     {i < (data.recentLeads.length - 1) && (
                       <div className="absolute left-1/2 top-4 bottom-0 -translate-x-1/2 w-px bg-slate-100" />
                     )}
-                    <div className={`relative z-10 w-2.5 h-2.5 rounded-full ring-4 ring-white ${TIER_COLORS[lead.categorie] || 'bg-slate-300'}`} />
+                    <div className={`relative z-10 w-2.5 h-2.5 rounded-full ring-4 ring-white ${TIER_BAR_COLORS[lead.categorie as keyof typeof TIER_BAR_COLORS] || 'bg-slate-300'}`} />
                   </div>
                   <div className="pb-5">
                     <p className="text-sm text-slate-900 font-medium">
@@ -198,16 +202,19 @@ function TierBreakdown({ totalLeads }: { totalLeads: number }) {
   const [byCategorie, setByCategorie] = useState<{ categorie: string; _count: number }[]>([]);
 
   useEffect(() => {
-    api.get('/monitor').then(r => setByCategorie(r.data.byCategorie)).catch(() => {});
+    api.get('/monitor').then(r => setByCategorie(r.data.byCategorie)).catch((err: any) => {
+      console.error('[TierBreakdown]', err.message);
+    });
   }, []);
 
   const total = totalLeads || 1;
 
-  const tiers = [
-    { key: 'CHAUD', label: 'Tier A', bar: 'bg-violet-500', text: 'text-violet-700' },
-    { key: 'TIEDE', label: 'Tier B', bar: 'bg-fuchsia-400', text: 'text-fuchsia-600' },
-    { key: 'FROID', label: 'Tier C', bar: 'bg-slate-300', text: 'text-slate-500' },
-  ];
+  const tiers = (['CHAUD', 'TIEDE', 'FROID'] as const).map(key => ({
+    key,
+    label: TIER_LABELS[key],
+    bar: TIER_BAR_COLORS[key],
+    text: TIER_BAR_TEXT[key],
+  }));
 
   if (totalLeads === 0) {
     return (

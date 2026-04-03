@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { config } from '../config';
 
 interface ScrapedLead {
   nom: string;
@@ -26,7 +27,7 @@ class LeadScraper {
         params: {
           domain,
           limit: hunterLimit,
-          api_key: process.env.HUNTER_API_KEY,
+          api_key: config.hunter.apiKey,
         },
       });
 

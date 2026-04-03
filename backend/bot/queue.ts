@@ -1,5 +1,6 @@
 import Bull from 'bull';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
+import { config } from '../config';
 import { Server } from 'socket.io';
 import LeadScraper from '../services/LeadScraper';
 import LeadEnricher from '../services/LeadEnricher';
@@ -8,13 +9,9 @@ import LeadDeduplicator from '../services/LeadDeduplicator';
 import EmailService from '../services/EmailService';
 import TemplateEngine from '../services/TemplateEngine';
 
-const prisma = new PrismaClient();
-
 let io: Server | null = null;
 
-const botQueue = new Bull('bot-queue', {
-  redis: process.env.REDIS_URL || 'redis://localhost:6379',
-});
+const botQueue = new Bull('bot-queue', { redis: config.redis.url });
 
 export function setIO(socketIO: Server): void {
   io = socketIO;
@@ -76,7 +73,7 @@ botQueue.process('scrape-and-send', async (job) => {
           prenom: lead.nom.split(' ')[0],
           entreprise: lead.entreprise || '',
           secteur: lead.secteur || '',
-          expediteur: process.env.FROM_NAME,
+          expediteur: config.email.fromName,
         });
         await EmailService.send({ leadId: lead.id, to: lead.email, subject: tpl.subject, html: tpl.html });
         await prisma.lead.update({ where: { id: lead.id }, data: { statut: 'CONTACTE' } });

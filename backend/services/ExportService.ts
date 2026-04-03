@@ -1,9 +1,8 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { Parser } from 'json2csv';
 import PDFDocument from 'pdfkit';
 import { Response } from 'express';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 class ExportService {
   async getLeads(filters: Prisma.LeadWhereInput = {}) {

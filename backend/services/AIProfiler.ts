@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { config } from '../config';
 
 interface Lead {
   nom: string;
@@ -25,7 +26,7 @@ class AIProfiler {
   private openai: OpenAI;
 
   constructor() {
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    this.openai = new OpenAI({ apiKey: config.openai.apiKey });
   }
 
   async generateMessage({ lead, canal = 'email', context = '' }: GenerateMessageOptions): Promise<string> {

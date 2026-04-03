@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 interface Lead {
   nom?: string;
@@ -18,7 +16,6 @@ class LeadDeduplicator {
     const unique: Lead[] = [];
     const seen = new Set<string>();
 
-    // Check against DB
     const existingEmails = new Set(
       (await prisma.lead.findMany({ select: { email: true } }))
         .map((l) => l.email?.toLowerCase())

@@ -44,6 +44,9 @@ class TemplateEngine {
     sms: {
       text: `Bonjour {{prenom}}, {{expediteur}} ici. Question rapide sur {{entreprise}} — dispo 5 min ? 👋`,
     },
+    telegram_intro: {
+      text: `Bonjour {{prenom}} ! Je travaille avec des entreprises du secteur {{secteur}} et j'ai pensé à vous en voyant {{entreprise}}. Seriez-vous ouvert à un échange rapide ?`,
+    },
   };
 
   render(templateKey: string, variables: TemplateVariables): RenderedTemplate {

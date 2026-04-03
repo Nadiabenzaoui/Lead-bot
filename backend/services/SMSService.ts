@@ -1,7 +1,6 @@
 import twilio from 'twilio';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { config } from '../config';
+import { logMessage } from '../lib/logMessage';
 
 interface SendOptions {
   leadId: string;
@@ -10,27 +9,22 @@ interface SendOptions {
 }
 
 class SMSService {
-  _getClient() {
-    return twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  private get client() {
+    return twilio(config.twilio.accountSid, config.twilio.authToken);
   }
 
   async send({ leadId, to, body }: SendOptions): Promise<{ success: boolean }> {
     try {
-      await this._getClient().messages.create({
-        from: process.env.TWILIO_PHONE,
+      await this.client.messages.create({
+        from: config.twilio.phone,
         to,
         body,
       });
 
-      await prisma.message.create({
-        data: { leadId, canal: 'SMS', statut: 'ENVOYE', content: body.slice(0, 200) },
-      });
-
+      await logMessage({ leadId, canal: 'SMS', statut: 'ENVOYE', content: body });
       return { success: true };
     } catch (err: any) {
-      await prisma.message.create({
-        data: { leadId, canal: 'SMS', statut: 'ECHEC', content: err.message },
-      });
+      await logMessage({ leadId, canal: 'SMS', statut: 'ECHEC', content: err.message });
       throw err;
     }
   }
